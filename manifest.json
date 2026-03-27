@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Shorts Guard",
+  "version": "1.0.1",
+  "description": "Control your YouTube Shorts consumption with daily limits and auto-scroll",
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/shorts/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles/hud.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "128": "icons/icon128.png"
+  }
+}

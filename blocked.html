@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shorts Guard - Limit Reached</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/blocked.css">
+</head>
+<body>
+  <div class="blocked-container">
+    <div class="background-animation">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+
+    <div class="content">
+      <div class="emoji">🏆</div>
+      <h1>You've hit your Shorts limit for today!</h1>
+      <p class="subtitle">Time to conquer something greater 💪</p>
+
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-emoji">📊</span>
+          <span class="stat-label">Shorts Watched</span>
+          <span id="count-display" class="stat-value">0</span>
+        </div>
+      </div>
+
+      <div class="reset-info">
+        <p>Your limit resets in</p>
+        <div id="countdown" class="countdown">--:--:--</div>
+      </div>
+
+      <div class="actions">
+        <a href="https://www.youtube.com" class="btn-youtube">
+          <span>🎬</span> Back to YouTube
+        </a>
+      </div>
+
+      <p class="motivational">"The secret of getting ahead is getting started." — Mark Twain</p>
+    </div>
+  </div>
+
+  <script src="blocked.js"></script>
+</body>
+</html>
