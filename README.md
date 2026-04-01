@@ -1,64 +1,80 @@
 # Shorts Guard
 
-Shorts Guard is a Chrome extension that helps you control YouTube Shorts usage with a daily limit, automatic short counting, and a block screen once your limit is reached.
+**Shorts Guard** is a lightweight Chrome extension that helps you control YouTube Shorts consumption using a **daily limit**. It tracks Shorts watched, shows a small in-video **HUD** with your progress, auto-advances while you’re under the limit, and **blocks Shorts** once you hit your cap.
+
+- **Extension type**: Chrome Extension (Manifest V3)
+- **Version**: `1.0.1`
+- **Build step**: none (plain HTML/CSS/JavaScript)
 
 ## Features
 
-- Set a daily Shorts limit during onboarding
-- Track Shorts watched count for the current day
-- Auto-increment count after a short is watched for 5 seconds
-- Auto-scroll to the next short while under the limit
-- Show an in-video HUD with live progress
-- Block further Shorts access after limit is reached
-- Automatically reset count at midnight
+- **Daily limit**: set how many Shorts you want to watch today.
+- **Auto counting**: increments after a Short is watched for ~5 seconds.
+- **In-video HUD**: always-visible progress indicator (`count/limit`).
+- **Auto-advance**: attempts to move to the next Short while under the limit.
+- **Block screen**: redirects to a “limit reached” page when you hit the cap.
+- **Daily reset**: count resets automatically at midnight (via alarms).
 
-## Project Structure
+## Install (Load Unpacked)
 
-- `manifest.json` - Extension configuration (Manifest V3)
-- `background.js` - Service worker for state, alarms, and messaging
-- `content.js` - YouTube Shorts page logic (watch detection, counting, auto-scroll, HUD)
-- `popup.html` / `popup.js` - Extension popup UI and settings
-- `blocked.html` / `blocked.js` - Limit-reached screen
-- `styles/` - Popup, HUD, and blocked page styles
-- `icons/` - Extension icons
-
-## Installation (Load Unpacked)
-
-1. Clone or download this repository.
-2. Open Chrome and go to `chrome://extensions/`.
-3. Enable **Developer mode** (top-right).
+1. Download/clone this repo.
+2. Open Chrome → `chrome://extensions/`.
+3. Turn on **Developer mode** (top-right).
 4. Click **Load unpacked**.
-5. Select this project folder (`shorts guard`).
-6. Pin the extension from the Chrome toolbar for easy access.
+5. Select the project folder (`shorts guard`).
+6. (Optional) Pin **Shorts Guard** in the toolbar for quick access.
 
-## How It Works
+## Usage
 
-1. Open the extension popup and set your daily Shorts limit.
-2. Visit YouTube Shorts (`youtube.com/shorts/...`).
-3. Shorts Guard tracks watched shorts and updates the counter.
-4. After each counted short, it attempts to move to the next short automatically.
-5. When your count reaches the limit, you are redirected to the blocked page.
-6. The count resets automatically at midnight.
+1. Click the extension icon to open the popup.
+2. Complete onboarding by setting your **daily Shorts limit**.
+3. Visit a Shorts page like `youtube.com/shorts/...`.
+4. Watch normally—after ~5 seconds per Short, Shorts Guard increments your count.
+5. When you reach your limit, Shorts Guard redirects you to `blocked.html`.
 
-## Permissions Used
+## How it works (high level)
 
-- `storage` - Save daily limit, count, and reset state
-- `alarms` - Schedule daily midnight reset
-- `tabs` - Tab-level extension behavior support
-- `scripting` - Script execution support for extension logic
-- `*://*.youtube.com/*` host permission - Run on YouTube Shorts pages
+- A content script runs on `*://*.youtube.com/shorts/*` and:
+  - detects when you’re on a new Short (URL + periodic checks),
+  - starts a ~5s timer per Short, then increments your daily count,
+  - updates an on-screen HUD,
+  - auto-advances if you’re still under the limit,
+  - redirects to `blocked.html` once your daily limit is reached.
+- A background service worker stores state in `chrome.storage.local` and schedules a midnight reset using `chrome.alarms`.
 
-## Development Notes
+## Permissions (why they’re needed)
 
-- Manifest version: `3`
-- Current extension version: `1.0.1`
-- No build step required (plain HTML/CSS/JavaScript)
+- **`storage`**: store your limit, today’s count, and onboarding state.
+- **`alarms`**: schedule the daily reset at midnight.
+- **`tabs`**: supports tab-level extension behavior.
+- **`scripting`**: supports extension script execution patterns (MV3).
+- **Host permission `*://*.youtube.com/*`**: required to run on YouTube (Shorts pages specifically).
 
-## Testing Checklist
+## Project structure
 
-- Set a limit from popup onboarding
-- Verify HUD appears on Shorts page
-- Confirm count increases after 5 seconds on a short
-- Confirm auto-scroll behavior between shorts
-- Hit limit and verify redirect to `blocked.html`
-- Verify daily reset behavior around midnight
+- `manifest.json`: extension configuration (Manifest V3)
+- `background.js`: service worker (state, alarms, messaging)
+- `content.js`: Shorts logic (watch detection, counting, HUD, auto-advance, redirect)
+- `popup.html`, `popup.js`: popup UI + settings
+- `blocked.html`, `blocked.js`: limit-reached screen
+- `styles/`: popup/HUD/blocked styles
+- `icons/`: extension icons
+
+## Troubleshooting
+
+- **HUD isn’t showing**: confirm you’re on `youtube.com/shorts/...` and the extension is enabled in `chrome://extensions/`.
+- **Counting feels off**: counting happens after ~5 seconds on a Short; rapidly skipping may not increment.
+- **Reset didn’t happen**: keep Chrome running overnight (alarms run in the background, but system/Chrome settings can affect timing).
+
+## Privacy
+
+Shorts Guard stores only local settings (limit, count, timestamps) in **Chrome local extension storage**. It does not include a backend and does not send data to external servers.
+
+## Test checklist
+
+- Set a limit from the popup onboarding
+- Verify HUD appears on Shorts pages
+- Confirm count increments after ~5 seconds on a Short
+- Confirm auto-advance behavior under the limit
+- Hit the limit and verify redirect to `blocked.html`
+- Verify daily reset around midnight
